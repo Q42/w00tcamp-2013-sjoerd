@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+var soundPos, audio;
+
+function init(dir)
+{
+  document.getElementById("buttons").innerHTML = "Loading...";
+  
+  var xhr = new XMLHttpRequest();
+  xhr.open("GET", dir + "Sound.js", false);
+  xhr.send();
+  soundPos = JSON.parse(xhr.responseText);
+  
+  audio = document.createElement("audio");
+  audio.src = dir + "Sound.mp3"
+  audio.load();
+  initAudio();
+}
+
+function initAudio()
+{
+  try
+  {
+    audio.currentTime = 0;
+    drawButtons()
+  }
+  catch(e)
+  {
+    setTimeout(initAudio, 100)
+  }
+}
+
+function drawButtons()
+{
+  document.getElementById("buttons").innerHTML = "<div><button onclick='location.reload()'>Menu</button></div>";
+  
+  var ids = [];
+  for (var i in soundPos)
+    ids.push(1*i);
+  ids.sort(function(a,b) {return a - b});
+  
+  for (var i = 0; i < ids.length; i++)
+  {
+    var button = document.createElement("button")
+    button.innerHTML = ids[i];
+    button.onclick = function(i) { return function() { play(ids[i]) }}(i);
+    document.body.appendChild(button);
+  }
+}
+
+var stopTH
+function play(nr)
+{
+  clearTimeout(stopTH);
+  try
+  {
+    audio.currentTime = soundPos[nr][0]; 
+    audio.play();
+    stopTH = setTimeout(stop, soundPos[nr][1] * 1000 + 500);
+  }
+  catch(e)
+  {
+    setTimeout(function() { play(nr) }, 100);
+  }
+}
+
+function stop()
+{
+  audio.pause();
+}
+</script>
+<style>button {font-size:200%;}</style>
+<link rel="stylesheet" type="text/css" href="http://q42.nl/w00tcamp/w00tcamp-footer.css"></link>
+</head>
+<body>
+  
+  <div id="buttons">
+    <div><button onclick="init('lsl1/')">Load LSL1</button></div>
+    <div><button onclick="init('kq2/')">Load KQ2</button></div>
+    <div><button onclick="init('kq3/')">Load KQ3</button></div>
+    <div><button onclick="init('sq1/')">Load SQ1</button></div>
+    <div><button onclick="init('sq2/')">Load SQ2</button></div>
+    <div><button onclick="init('pq1/')">Load PQ1</button></div>
+  </div>
+
+  <div id="w00tcamp-footer"><a href="http://q42.nl/w00tcamp" title="this is another Q42 w00tcamp product, checkout more q42 idea's and fun products here"><img class="q42-logo" src="http://q42.nl/img/q42_logo.gif" ></img> #w00tcamp</a></div>
+
+  <script type="text/javascript">
+
+   var _gaq = _gaq || [];
+   _gaq.push(['_setAccount', 'UA-2714808-12']);
+   _gaq.push(['_trackPageview']);
+
+   (function() {
+  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+   })();
+  </script>
+  
+</body>
+</html>
